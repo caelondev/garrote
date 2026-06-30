@@ -22,7 +22,41 @@ Unlike most esolangs that torture you with stacks, Garrote tortures you with a q
 
 # Hello, World!
 
-_Coming soon_
+```
+72&#101&#108&&#111&#44&#32&#87&#111&#114&#108&#100&#33&
+```
+
+You might wonder...
+
+> What the f\*ck am I looking at?
+
+Calm down, let's read this instruction-by-instruction
+
+```
+72&#   load 'H', print, pop
+101&#  load 'E', print, pop
+108&&# load 'L', print twice, pop
+111&#  load 'O', print, pop
+44&#   load ',', print, pop
+32&#   load ' ', print, pop
+87&#   load 'W', print, pop
+111&#  load 'O', print, pop
+114&#  load 'R', print, pop
+108&#  load 'L', print, pop
+100&#  load 'D', print, pop
+33&    load '!', print
+```
+
+it loads an unsigned 8-bit integer and displays it as an ASCII character
+
+# Comments
+
+Anything that is not an instruction/a literal is ignored. Making them act like a comment
+
+```
+72&# <this is a valid comment>
+71 <this is a valid comment too!> &#
+```
 
 # Memory Model
 
@@ -40,9 +74,9 @@ Control flow is handled entirely through **bookmarks** — a separate stack that
 
 ```
 program:   3  %  &  1  -  ^  #
-              ^             |
-              |             |
-              +-------------+
+              ^           |
+              |           |
+              +-----------+
                 jumps back here if front != 0
 ```
 
@@ -72,7 +106,7 @@ bookmark stack
 
 ## Details
 
-**`+` and `-` pop order** — both pop the front value first (`a`), then the new front (`b`). For `+` it doesn't matter. For `-` it does: result is `max(a - b, 0)`, not the other way around.
+**`+` and `-` pop order** — both pop the front value first (`a`), then the new front (`b`). For `+` it doesn't matter. For `-` it does: result is `a.wrapping_sub(b)`, not the other way around.
 
 ```
 queue: [ 3 | 10 | ... ]
@@ -81,9 +115,7 @@ queue: [ 3 | 10 | ... ]
 -  →  max(3 - 10, 0)  →  0
 ```
 
-**`+` wraps on overflow** — values are u8, so `250 + 10` gives `4`, not `260`.
-
-**`-` clamps at zero** — if `a < b`, you get `0`.
+**`+` and `-` wraps on overflow** — values are u8, so `250 + 10` gives `4`, not `260`.
 
 **`%` doesn't touch the queue** — if your queue looks wrong near a loop, `%` is not the culprit.
 

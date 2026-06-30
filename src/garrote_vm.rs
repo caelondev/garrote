@@ -1,6 +1,6 @@
-use std::{cmp::max, collections::VecDeque, error::Error};
+use std::collections::VecDeque;
 
-use crate::tokens::Instruction::{self, Bookmark};
+use crate::tokens::Instruction::{self};
 
 pub struct GarroteVM {
     instructions: Vec<Instruction>,
