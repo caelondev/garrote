@@ -1,5 +1,6 @@
 use std::process;
 
+pub mod garrote_vm;
 pub mod lexer;
 pub mod tokens;
 
