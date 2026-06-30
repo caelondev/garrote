@@ -35,7 +35,7 @@ impl Lexer {
         let c = self.advance();
 
         match c {
-            '0'..='9' => Some(self.tokenize_literal()),
+            '0'..='9' => Some(self.tokenize_literal(c)),
             '#' => Some(Instruction::Pop),
             '+' => Some(Instruction::Add),
             '-' => Some(Instruction::Sub),
@@ -46,8 +46,8 @@ impl Lexer {
         }
     }
 
-    fn tokenize_literal(&mut self) -> Instruction {
-        let mut value: u8 = 0;
+    fn tokenize_literal(&mut self, first: char) -> Instruction {
+        let mut value: u8 = first as u8 - b'0';
 
         while !self.is_at_end() && self.is_number(self.peek()) {
             // NOTE: the purpose of "- b'0'" is to offset the character's ASCII value
@@ -81,6 +81,6 @@ impl Lexer {
     }
 
     fn is_number(&self, c: char) -> bool {
-        matches!(c, '0'..'9')
+        matches!(c, '0'..='9')
     }
 }
