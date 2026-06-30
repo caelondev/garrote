@@ -1,6 +1,6 @@
-use std::collections::VecDeque;
+use std::{cmp::max, collections::VecDeque};
 
-use crate::{printerr, tokens::Instruction};
+use crate::tokens::Instruction;
 
 pub struct GarroteVM {
     instructions: Vec<Instruction>,
@@ -26,8 +26,18 @@ impl GarroteVM {
                 Instruction::Pop => {
                     self.dequeue()?;
                 }
-                Instruction::Add => {}
-                Instruction::Sub => {}
+                Instruction::Add => {
+                    let a = self.dequeue()?;
+                    let b = self.dequeue()?;
+                    self.enqueue(a.wrapping_add(b));
+                    self.queue.make_contiguous().reverse(); // the devil himself 3:)
+                }
+                Instruction::Sub => {
+                    let a = self.dequeue()?;
+                    let b = self.dequeue()?;
+                    self.enqueue(a.wrapping_sub(b));
+                    self.queue.make_contiguous().reverse();
+                }
                 Instruction::Bookmark => {}
                 Instruction::JumpIfZero => {}
                 Instruction::Display => {

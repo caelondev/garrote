@@ -63,8 +63,8 @@ bookmark stack
 | :-----------: | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `n` (literal) | push  | Push the literal `n` onto the back of the queue.                                                                                                                                       |
 |      `#`      | pop   | Remove and discard the front of the queue. No replacement.                                                                                                                             |
-|      `+`      | fuse  | Pop the front two values, push their sum.                                                                                                                                              |
-|      `-`      | split | Pop the front two values, push `max(a - b, 0)` — clamped at zero, never negative.                                                                                                      |
+|      `+`      | fuse  | Pop the front two values, push their sum, and reverses the queue.                                                                                                                      |
+|      `-`      | split | Pop the front two values, push `max(a - b, 0)`, and reverses the queue — clamped at zero, never negative.                                                                              |
 |      `%`      | mark  | Push the current position onto a separate bookmark stack. Does not touch the queue.                                                                                                    |
 |      `^`      | jump  | Peek (don't pop) the front of the queue. If nonzero → jump back to the position on top of the bookmark stack. If zero → pop the bookmark stack, then continue to the next instruction. |
 |      `&`      | print | Pop the front value, print it as an ASCII character.                                                                                                                                   |
