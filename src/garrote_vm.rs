@@ -1,10 +1,12 @@
-use std::{cmp::max, collections::VecDeque};
+use std::{cmp::max, collections::VecDeque, error::Error};
 
-use crate::tokens::Instruction;
+use crate::tokens::Instruction::{self, Bookmark};
 
 pub struct GarroteVM {
     instructions: Vec<Instruction>,
     inst_ptr: usize,
+    bookmark_stack: Vec<usize>,
+
     queue: VecDeque<u8>,
 }
 
@@ -13,6 +15,7 @@ impl GarroteVM {
         Self {
             instructions: inst,
             inst_ptr: 0,
+            bookmark_stack: Vec::new(),
             queue: VecDeque::with_capacity(u8::MAX as usize),
         }
     }
@@ -38,10 +41,41 @@ impl GarroteVM {
                     self.enqueue(a.wrapping_sub(b));
                     self.queue.make_contiguous().reverse();
                 }
-                Instruction::Bookmark => {}
-                Instruction::JumpIfZero => {}
+                Instruction::Bookmark => {
+                    self.bookmark_stack.push(self.inst_ptr + 1); // next instruction after the bookmark itself
+                }
+                Instruction::JumpIfZero => {
+                    if self.bookmark_stack.is_empty() {
+                        return Err(format!(
+                            "Jump at instruction [{}] requires a bookmark, but none exists.",
+                            self.inst_ptr + 1
+                        ));
+                    }
+
+                    let first_val = match self.peek_first() {
+                        Some(v) => Ok(*v),
+                        None => Err(format!(
+                            "Jump at instruction [{}] requires the first value in the stack. but none exists.",
+                            self.inst_ptr + 1
+                        )),
+                    }?;
+
+                    if first_val != 0 {
+                        let bookmark = self.bookmark_stack.get(0).expect("Bookmark exists here");
+                        self.inst_ptr = *bookmark;
+                        continue;
+                    }
+                }
                 Instruction::Display => {
-                    let value = self.dequeue()? as char;
+                    let value = match self.peek_first() {
+                        Some(v) => *v,
+                        None => {
+                            return Err(format!(
+                                "Display at instruction [{}] requires the first value in the stack. but none exists.",
+                                self.inst_ptr + 1
+                            ));
+                        }
+                    } as char;
                     print!("{}", value);
                 }
             };
@@ -72,5 +106,10 @@ impl GarroteVM {
         }
 
         Ok(self.queue.pop_front().expect("dequeue should always exist"))
+    }
+
+    #[inline(always)]
+    pub fn peek_first(&self) -> Option<&u8> {
+        self.queue.get(0)
     }
 }
