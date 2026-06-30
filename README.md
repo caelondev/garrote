@@ -8,11 +8,13 @@ Garrote is a **queue-based** esolang. It uses... well, queues for its entire mem
 
 - [Introduction](#introduction)
 - [Hello, World!](#hello-world)
+- [Comments](#comments)
 - [Memory Model](#memory-model)
 - [Execution Model](#execution-model)
 - [Instruction Set](#instruction-set)
+  - [Details](#details)
 - [Examples](#examples)
-- [License](./LICENSE.md)
+- [License](#license)
 
 # Introduction
 
