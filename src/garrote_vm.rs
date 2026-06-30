@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use crate::tokens::Instruction;
+use crate::{printerr, tokens::Instruction};
 
 pub struct GarroteVM {
     instructions: Vec<Instruction>,
@@ -23,12 +23,17 @@ impl GarroteVM {
 
             match instruction {
                 Instruction::Literal(n) => self.enqueue(*n),
-                Instruction::Pop => self.dequeue()?,
+                Instruction::Pop => {
+                    self.dequeue()?;
+                }
                 Instruction::Add => {}
                 Instruction::Sub => {}
                 Instruction::Bookmark => {}
                 Instruction::JumpIfZero => {}
-                Instruction::Display => {}
+                Instruction::Display => {
+                    let value = self.dequeue()? as char;
+                    print!("{}", value);
+                }
             };
 
             self.inst_ptr += 1;
@@ -48,7 +53,7 @@ impl GarroteVM {
     }
 
     #[inline(always)]
-    fn dequeue(&mut self) -> Result<(), String> {
+    fn dequeue(&mut self) -> Result<u8, String> {
         if self.queue.is_empty() {
             return Err(format!(
                 "Queue underflow at instruction [{}]",
@@ -56,7 +61,6 @@ impl GarroteVM {
             ));
         }
 
-        self.queue.pop_front().expect("dequeue should always exist");
-        Ok(())
+        Ok(self.queue.pop_front().expect("dequeue should always exist"))
     }
 }
