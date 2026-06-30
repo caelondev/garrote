@@ -39,6 +39,7 @@ impl Lexer {
             '#' => Some(Instruction::Pop),
             '+' => Some(Instruction::Add),
             '-' => Some(Instruction::Sub),
+            '~' => Some(Instruction::Graft),
             '^' => Some(Instruction::JumpIfZero),
             '%' => Some(Instruction::Bookmark),
             '&' => Some(Instruction::Display),

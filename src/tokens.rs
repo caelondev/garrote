@@ -4,6 +4,7 @@ pub enum Instruction {
     Pop,         // # --
     Add,         // + --
     Sub,         // - --
+    Graft,       // ~ --
     Bookmark,    // % --
     JumpIfZero,  // ^ --
     Display,     // & --

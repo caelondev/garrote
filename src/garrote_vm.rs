@@ -41,6 +41,19 @@ impl GarroteVM {
                     self.enqueue(a.wrapping_sub(b));
                     self.queue.make_contiguous().reverse();
                 }
+                Instruction::Graft => {
+                    let first = match self.peek_first() {
+                        Some(v) => *v,
+                        None => {
+                            return Err(format!(
+                                "Graft at instruction [{}] requires the first value in the stack. but none exists.",
+                                self.inst_ptr + 1
+                            ));
+                        }
+                    };
+
+                    self.enqueue(first);
+                }
                 Instruction::Bookmark => {
                     self.bookmark_stack.push(self.inst_ptr + 1); // next instruction after the bookmark itself
                 }
@@ -61,9 +74,11 @@ impl GarroteVM {
                     }?;
 
                     if first_val != 0 {
-                        let bookmark = self.bookmark_stack.get(0).expect("Bookmark exists here");
+                        let bookmark = self.bookmark_stack.last().expect("Bookmark exists here");
                         self.inst_ptr = *bookmark;
                         continue;
+                    } else {
+                        self.bookmark_stack.pop();
                     }
                 }
                 Instruction::Display => {
